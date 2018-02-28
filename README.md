@@ -3,9 +3,9 @@
 预览： https://majianyang666.github.io/MVVM/index.html
 
 ## 原理：
-1.使用Object.defineProperty的get和set方法进行数据劫持
-2.使用发布订阅模式
-3.单项绑定和双向绑定
+1. 使用Object.defineProperty的get和set方法进行数据劫持
+2. 使用发布订阅模式
+3. 单项绑定和双向绑定
 
 如下代码，data 里的name会和视图中的{{name}}一一映射，修改 data 里的值，会直接引起视图中对应数据的变化。
 ```
@@ -30,15 +30,16 @@
 
 观察者模式和数据监听：
 
-主题(subject)是什么？
-观察者(observer)是什么？
-观察者何时订阅主题？
-主题何时通知更新？
+- 主题(subject)是什么？
+- 观察者(observer)是什么？
+- 观察者何时订阅主题？
+- 主题何时通知更新？
 上面的例子中，主题应该是data的 name 属性，观察者是视图里的{{name}}，当一开始执行mvvm初始化(根据 el 解析模板发现{{name}})的时候订阅主题，当data.name发生改变的时候，通知观察者更新内容。 我们可以在一开始监控 data.name （Object.defineProperty(data, 'name', {...})），当用户修改 data.name 的时候调用主题的 subject.notify
 
 
 ## 思路：
 定义一个mvvm类，
+```
 class mvvm {
     constructor (opts) {
         this.init(opts)
@@ -48,6 +49,7 @@ class mvvm {
     init () {}
     compile () {}
 }
+```
 在用它构造一个实例的时候主要会用到observe和compile方法。
 observer进行数据的劫持，
 compile会在编译的时候对每一个属性创建一个观察者，当在需要的时候观察者会订阅主题。
