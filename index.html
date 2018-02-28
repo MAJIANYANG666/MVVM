@@ -6,6 +6,7 @@
 </head>
 <body>
     <div id="app">
+        <input v-model="name" type="text">
         <h1>{{name}} 's age is {{age}}</h1>
     </div>
     <script>
@@ -92,11 +93,65 @@
             }
         }
 
+        class Compile {
+            constructor (vm) {
+                this.vm = vm
+                this.node = vm.$el
+                this.compile()
+            }
+
+            compile () {
+                this.traverse(this.node)
+            }
+            traverse (node) {
+                if (node.nodeType === 1) {
+                    this.compileNode(node)
+                    node.childNodes.forEach(childNode=> {
+                        this.traverse(childNode)
+                    })
+                } else if (node.nodeType === 3) {
+                    this.compileText (node)
+                }
+            }
+
+            compileText (node) {
+                let reg = /{{(.+?)}}/g
+                let match
+                while (match = reg.exec(node.nodeValue)) {
+                    let raw = match[0]
+                    let key = match[1].trim()
+                    node.nodeValue = node.nodeValue.replace(raw, this.vm.$data[key])
+                    new Observer(this.vm, key, function (val, oldVal) {
+                        node.nodeValue = node.nodeValue.replace(oldVal, val)
+                    })
+                }
+            }
+            compileNode (node) {
+                let attrs = [...node.attributes]
+                attrs.forEach(attr=>{
+                    if (this.isDirective(attr.name)) {
+                        let key = attr.value
+                        node.value = this.vm.$data[key]
+                        new Observer(this.vm, key, function (newVal) {
+                            node.value = newVal
+                        } )
+                        node.oninput = (e)=> {
+                            this.vm.$data[key] = e.target.value
+                        }
+                    }
+
+                })
+            }
+            isDirective (attrName) {
+                return attrName === 'v-model'
+            }
+        }
+
         class mvvm {
             constructor (opts) {
                 this.init(opts)
                 observe(this.$data)
-                this.compile()
+                new Compile(this)
             }
             init (opts) {
                 if (opts.el.nodeType === 1) {
@@ -108,30 +163,6 @@
                 this.$data = opts.data
                 this.observers = []
             }
-            compile () {
-                this.traverse(this.$el)
-            }
-            traverse (node) {
-                if (node.nodeType === 1) {
-                    node.childNodes.forEach(childNode=> {
-                        this.traverse(childNode)
-                    })
-                } else if (node.nodeType === 3) {
-                    this.renderText (node)
-                }
-            }
-            renderText (node) {
-                let reg = /{{(.+?)}}/g
-                let match
-                while (match = reg.exec(node.nodeValue)) {
-                    let raw = match[0]
-                    let key = match[1].trim()
-                    node.nodeValue = node.nodeValue.replace(raw,this.$data[key])
-                    new Observer(this, key, function (val, oldVal) {
-                        node.nodeValue = node.nodeValue.replace(oldVal, val)
-                    })
-                }
-            }
         }
 
         let vm = new mvvm({
@@ -142,9 +173,9 @@
             }
         })
 
-        setInterval(function () {
-            vm.$data.age++
-        }, 1000)
+        // setInterval(function () {
+        //     vm.$data.age++
+        // }, 1000)
     </script>
 </body>
 </html>
