@@ -6,7 +6,7 @@
 </head>
 <body>
     <div id="app">
-        <input v-model="name" type="text">
+        <input v-model="name" v-on:click="sayHi" type="text">
         <h1>{{name}} 's age is {{age}}</h1>
     </div>
     <script>
@@ -129,21 +129,36 @@
             compileNode (node) {
                 let attrs = [...node.attributes]
                 attrs.forEach(attr=>{
-                    if (this.isDirective(attr.name)) {
-                        let key = attr.value
-                        node.value = this.vm.$data[key]
-                        new Observer(this.vm, key, function (newVal) {
-                            node.value = newVal
-                        } )
-                        node.oninput = (e)=> {
-                            this.vm.$data[key] = e.target.value
-                        }
+                    if (this.isModelDirective(attr.name)) {
+                        this.bindModel(node, attr)
+                    } else if (this.isEventDirective(attr.name)) {
+                        this.bindEventHander(node, attr)
                     }
 
                 })
             }
-            isDirective (attrName) {
+            bindModel (node, attr) {
+                let key = attr.value
+                node.value = this.vm.$data[key]
+                new Observer(this.vm, key, function (newVal) {
+                    node.value = newVal
+                } )
+                node.oninput = (e)=> {
+                    this.vm.$data[key] = e.target.value
+                }
+            }
+            bindEventHander (node, attr) {
+                let eventType = attr.name.substr(5)
+                let methodName = attr.value
+                node.addEventListener(eventType, this.vm.$methods[methodName])
+            }
+
+            isModelDirective (attrName) {
                 return attrName === 'v-model'
+            }
+
+            isEventDirective (attrName) {
+                return attrName.indexOf('v-on') === 0
             }
         }
 
@@ -160,7 +175,8 @@
                     this.$el = document.querySelector(opts.el)
                 }
 
-                this.$data = opts.data
+                this.$data = opts.data || {}
+                this.$methods = opts.methods || {}
                 this.observers = []
             }
         }
@@ -170,6 +186,11 @@
             data: {
                 name: 'jirengu',
                 age: 3
+            },
+            methods: {
+                sayHi () {
+                    alert(`hi ${this.name}`)
+                }
             }
         })
 
