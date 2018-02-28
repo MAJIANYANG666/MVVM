@@ -34,6 +34,7 @@
 - 观察者(observer)是什么？
 - 观察者何时订阅主题？
 - 主题何时通知更新？
+
 上面的例子中，主题应该是data的 name 属性，观察者是视图里的{{name}}，当一开始执行mvvm初始化(根据 el 解析模板发现{{name}})的时候订阅主题，当data.name发生改变的时候，通知观察者更新内容。 我们可以在一开始监控 data.name （Object.defineProperty(data, 'name', {...})），当用户修改 data.name 的时候调用主题的 subject.notify
 
 
@@ -60,6 +61,6 @@ compile会在编译的时候对每一个属性创建一个观察者，当在需�
 设定一个currentobsever 。在合适的时间，在我需要看这个值的时候，我给他设置currentobsever = this，我再去调用它的属性，他会调用get，就会进行订阅。普通情况下。当用户去获取值的时候（下次）已经绑定了，就不会有currentobsever（每用一次设currentobsever = null）,只有再new时会有。
 
 ## 小技巧：
- 用Object.defineProperty把$data 中的数据直接代理到当前 vm 对象
- 用bind让 this.$methods 里面的函数中的 this，都指向 vm
+ 1. 用Object.defineProperty把$data 中的数据直接代理到当前 vm 对象
+ 2. 用bind让 this.$methods 里面的函数中的 this，都指向 vm
 
