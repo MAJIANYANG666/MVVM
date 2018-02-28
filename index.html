@@ -178,6 +178,23 @@
                 this.$data = opts.data || {}
                 this.$methods = opts.methods || {}
                 this.observers = []
+                //把$data 中的数据直接代理到当前 vm 对象
+                for (let key in this.$data) {
+                    Object.defineProperty(this, key, {
+                        enumerable: true,
+                        configurable: true,
+                        get: ()=>{
+                            return this.$data[key]
+                        },
+                        set: newVal=> {
+                            this.$data[key] = newVal
+                        }
+                    })
+                }
+                //让 this.$methods 里面的函数中的 this，都指向当前的 this，也就是 vm
+                for (let key in this.$methods) {
+                    this.$methods[key] = this.$methods[key].bind(this)
+                }
             }
         }
 
@@ -194,9 +211,11 @@
             }
         })
 
-        // setInterval(function () {
-        //     vm.$data.age++
-        // }, 1000)
+        let clock = setInterval(function () {
+            vm.age++  //等同于 vm.$data.age
+
+            if(vm.age === 10) clearInterval(clock)
+        }, 1000)
     </script>
 </body>
 </html>
