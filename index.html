@@ -2,12 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MVVM 单项绑定</title>
+    <title>MVVM 双项绑定</title>
+    <style>
+        #app {
+            text-align: center;
+            margin-top: 100px;
+            color: #888;
+        }
+        h1 {
+            color: #aaa;
+        }
+        input {
+            padding: 0 10px;
+            width: 600px;
+            line-height: 2.5;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+        }
+        .bind{
+            color: #766;
+        }
+        strong {
+            color: #05BC00;
+        }
+        button {
+            padding: 2px 8px;
+            border: none;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            background: #ddf;
+            color: white;
+            cursor: pointer;
+
+        }
+    </style>
 </head>
 <body>
     <div id="app">
-        <input v-model="name" v-on:click="sayHi" type="text">
-        <h1>{{name}} 's age is {{age}}</h1>
+        <h1>Hi，MVVM</h1>
+        <input v-model="name" placeholder="请输入内容" type="text" >
+        <h1 class="bind">{{name}} 's age is <strong>{{age}}</strong></h1>
+        <button v-on:click="sayHi">点击欢迎您</button>
     </div>
     <script>
         function observe(data) {
