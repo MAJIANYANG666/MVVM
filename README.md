@@ -3,8 +3,8 @@
 预览： https://majianyang666.github.io/MVVM/index.html
 
 ## 使用方法：
-点击input，会有弹框（实现了methods），此时输入input会发现下面的内容也会改变（双向绑定）,数字不停变化直到10停止（单项绑定）。
-你也可以在控制台输入 vm.name = xxx 或 vm.age = xxx来改变数据
+数字不停变化直到10停止（单项绑定），输入input会发现下面的内容也会改变（双向绑定）。点击button会有弹框（实现了methods），此时
+你也可以在控制台输入vm来查看vm对象，输入vm.name = xxx 或 vm.age = xxx来改变数据
 
 
 ## 原理：
