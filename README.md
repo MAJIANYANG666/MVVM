@@ -25,7 +25,7 @@
     var vm = new mvvm({
       el: '#app',
       data: { 
-          name: 'jirengu' 
+          name: '小马' 
       }
     })
   </script>
