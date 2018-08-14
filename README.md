@@ -42,7 +42,9 @@
 - 主题何时通知更新？
 
 上面的例子中，主题应该是data的 name 属性，观察者是视图里的{{name}}。
+
 单项绑定（data:name--->{{name}}）：当一开始执行mvvm初始化(根据 el 解析模板发现{{name}})的时候创建观察者，同时让观察者订阅主题，当data.name发生改变的时候，通知观察者更新内容。 （我们可以在一开始监控 data.name （Object.defineProperty(data, 'name', {...})），当用户修改 data.name 的时候调用主题的 subject.notify）
+
 双向绑定（<input v-model="name">--->data:name）：解析input的时候，看标记（v-model）是不是指令，若是,则input元素监听input事件，当用户输入时将data：name = e.target.value。
 
 
